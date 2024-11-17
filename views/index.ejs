@@ -8,17 +8,25 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Intolerances</h1>
+  <img src="/Intolerances.png" class="logo">
 
   <h3>What are your current Intolerances?</h3>
-<form action="/intolerances" method="POST">
-  <span><%= messages[i].name %></span>
-  <span><%= messages[i].msg %></span>
-  <span><%= messages[i].thumbUp %></span>
+
+  <ul id="intoleranceList">
+    <% for(var i=0; i<intolerances.length; i++) { %>
+      <li class="intoleranceItems">
+        <span><%= intolerances[i].item %></span>
+        <span><i class="fa fa-pencil" data-item="<%= intolerances[i].item %>" aria-hidden="true"></i></span>
+        <span><i class="fa fa-trash" data-item="<%= intolerances[i].item %>" aria-hidden="true"></i></span>
+      </li>
+      <% } %>
+  </ul>
+
+<form action="/intolerances" method="POST" id="intolerances">
+  <label for="userInput">Add Intolerance</label>
+  <input type="text" id="userInput" name="item" required>
   <button>Add</button>
   </form>
-
-  <h3></h3>
 
   <script src="main.js"></script>
 

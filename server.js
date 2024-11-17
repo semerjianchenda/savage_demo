@@ -23,63 +23,44 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(express.static('public'))
 
+
+// Retrieve data
 app.get('/', (req, res) => {
-  db.collection('intolerances').find().toArray((err, result) => {
-    if (err) return console.log(err)
-    res.render('index.ejs', {intolerances: result})
-  })
-})
-
-app.post('/intolerances', async (req, res) => {
-  const intolerance = new intolerance(req.body);
-  await intolerance.save();
-  res.send(intolerance);
-});
-app.get('/intolerances', async (req, res) => {
-  const intolerances = await intolerances.find();
-  res.send(intolerances);
-});
-app.get('/intolerances/:id', async (req, res) => {
-  const intolerance = await intolerance.findById(req.params.id);
-  res.send(intolerance);
+  db.collection('intoleranceList')
+    .find()
+    .toArray((err, result) => {
+      if (err) return console.error(err);
+      res.render('index.ejs', { intolerances: result });
+    });
 });
 
-app.put('/intolerances/:id', async (req, res) => {
-  const intolerance = await intolerance.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.send(intolerance);
+// Add new intolerance
+app.post('/intolerances', (req, res) => {
+  db.collection('intoleranceList').insertOne({ item: req.body.item }, (err, result) => {
+    if (err) return console.error(err);
+    console.log('Saved to database');
+    res.redirect('/');
+  });
 });
 
-app.delete('/intolerances/:id', async (req, res) => {
-  await Intolerance.findByIdAndDelete(req.params.id);
-  res.send({ message: 'Intolerance deleted' });
+app.put('/intolerances', (req, res) => {
+  db.collection('intoleranceList').findOneAndUpdate(
+    { item: req.body.oldItem }, // Find the old item
+    { $set: { item: req.body.newItem } }, // Update it with the new item
+    { returnDocument: 'after' }, // Optional: return the updated document
+    (err, result) => {
+      if (err) return res.status(500).send(err);
+      console.log('Updated item:', req.body.newItem);
+      res.send('Item updated');
+    }
+  );
 });
 
-// app.post('/messages', (req, res) => {
-//   db.collection('messages').insertOne({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
-//     if (err) return console.log(err)
-//     console.log('saved to database')
-//     res.redirect('/')
-//   })
-// })
-
-// app.put('/messages', (req, res) => {
-//   db.collection('messages')
-//   .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, {
-//     $set: {
-//       thumbUp:req.body.thumbUp + 1
-//     }
-//   }, {
-//     sort: {_id: -1},
-//     upsert: true
-//   }, (err, result) => {
-//     if (err) return res.send(err)
-//     res.send(result)
-//   })
-// })
-
-// app.delete('/messages', (req, res) => {
-//   db.collection('messages').findOneAndDelete({name: req.body.name, msg: req.body.msg}, (err, result) => {
-//     if (err) return res.send(500, err)
-//     res.send('Message deleted!')
-//   })
-// })
+// Delete an intolerance
+app.delete('/intolerances', (req, res) => {
+  db.collection('intoleranceList').findOneAndDelete({ item: req.body.item }, (err, result) => {
+    if (err) return res.status(500).send(err);
+    console.log('Deleted from database');
+    res.send('Item deleted');
+  });
+});

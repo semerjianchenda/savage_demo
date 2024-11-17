@@ -1,45 +1,51 @@
-// var thumbUp = document.getElementsByClassName("fa-thumbs-up");
-// var trash = document.getElementsByClassName("fa-trash");
+var edit = document.getElementsByClassName("fa-pencil");
+var trash = document.getElementsByClassName("fa-trash");
 
-// Array.from(thumbUp).forEach(function(element) {
-//       element.addEventListener('click', function(){
-//         const name = this.parentNode.parentNode.childNodes[1].innerText
-//         const msg = this.parentNode.parentNode.childNodes[3].innerText
-//         const thumbUp = parseFloat(this.parentNode.parentNode.childNodes[5].innerText)
-//         fetch('messages', {
-//           method: 'put',
-//           headers: {'Content-Type': 'application/json'},
-//           body: JSON.stringify({
-//             'name': name,
-//             'msg': msg,
-//             'thumbUp':thumbUp
-//           })
-//         })
-//         .then(response => {
-//           if (response.ok) return response.json()
-//         })
-//         .then(data => {
-//           console.log(data)
-//           window.location.reload(true)
-//         })
-//       });
-// });
+// Delete functionality
+Array.from(trash).forEach(function (element) {
+  element.addEventListener('click', function () {
+    const item = this.getAttribute('data-item'); // Get item name from data attribute
+    fetch('/intolerances', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        item: item, // Send the item to delete
+      }),
+    }).then(function (response) {
+      if (response.ok) {
+        window.location.reload(); // Reload page on success
+      } else {
+        console.error('Failed to delete');
+      }
+    });
+  });
+});
 
-// Array.from(trash).forEach(function(element) {
-//       element.addEventListener('click', function(){
-//         const name = this.parentNode.parentNode.childNodes[1].innerText
-//         const msg = this.parentNode.parentNode.childNodes[3].innerText
-//         fetch('messages', {
-//           method: 'delete',
-//           headers: {
-//             'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify({
-//             'name': name,
-//             'msg': msg
-//           })
-//         }).then(function (response) {
-//           window.location.reload()
-//         })
-//       });
-// });
+// Edit functionality
+Array.from(edit).forEach(function (element) {
+  element.addEventListener('click', function () {
+    const oldItem = this.getAttribute('data-item'); // Get current item name
+    const newItem = prompt('Edit your intolerance:', oldItem); // Ask user for new value
+
+    if (newItem && newItem !== oldItem) {
+      fetch('/intolerances', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          oldItem: oldItem, // Send old item
+          newItem: newItem, // Send updated item
+        }),
+      }).then(function (response) {
+        if (response.ok) {
+          window.location.reload(); // Reload page on success
+        } else {
+          console.error('Failed to edit');
+        }
+      });
+    }
+  });
+});

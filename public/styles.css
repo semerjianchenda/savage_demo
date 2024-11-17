@@ -1,6 +1,35 @@
-body{
-  background: red;
+body {
+  background-image:  repeating-radial-gradient(circle at 0 0, transparent 0, #ddf6e2 97px), repeating-linear-gradient(#f7fffa, #f7fffa);
+background-color: #ddf6e2;
+
 }
-h3{
-  margin-top: 40px;
+
+.logo {
+  height: 350px;
+  margin-left: 550px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+
+ul {
+  margin: auto;
+  border: 1px solid black;
+  height: 300px;
+  width: 300px;
+  margin-bottom: 100px;
+}
+
+form {
+  text-align: center;
+}
+
+li {
+  text-align: center;
+  list-style: none;
 }
